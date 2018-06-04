@@ -1,5 +1,5 @@
 TODO:
 
-- Formato expressão matemática (pilha talvez?)
-- Definição de lider
-- Como vários servidores responderão pelo mesmo IP (Multicast?)
+- Formato expressão matemática (pilha talvez? yes tipo calc financeira)
+- Definição de lider - dicionário????
+- Como vários servidores responderão pelo mesmo IP (Multicast?) - boa
