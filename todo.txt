@@ -1,0 +1,5 @@
+TODO:
+
+- Formato expressão matemática (pilha talvez?)
+- Definição de lider
+- Como vários servidores responderão pelo mesmo IP (Multicast?)
