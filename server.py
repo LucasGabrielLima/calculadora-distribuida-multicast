@@ -5,6 +5,7 @@ import threading
 import datetime
 import pickle #Biblioteca para serializar objetos de forma que possam ser enviados pela rede
 from time import sleep
+from collections import OrderedDict
 
 class Message(object):
     sender = ''
@@ -16,8 +17,6 @@ class Message(object):
         self.sid = sid
         self.payload = payload
 
-def send_to_group(message):
-	sock.sendto(start_byte+ 's' + message, (group_multicast, port))
 
 def heartbeat(sock, sid):
 	print("Sending heartbeat...")
@@ -40,17 +39,19 @@ def get_server_id():
 	greater_id = 0
 
 	#Escuta pelo tempo do heartbeat e define o ID igual ao maior ID escutado + 1
-	while(datetime.datetime.now() - start_byte < datetime.timedelta(seconds = 4)):
+	while(datetime.datetime.now() - start_time < datetime.timedelta(seconds = 4)):
 		try:
-			sock.recv(10240)
-			message, addr = sock.recvfrom(2048)
+			message, addr = sock.recvfrom(10240)
 			message = pickle.loads(message)
-			if(message.sender == 's' and message.sid > greater):
-				greater = message.sid
+			print(message.sid)
+			if(message.sender == 's' and message.sid > greater_id):
+				greater_id = message.sid
+
 		except:
 			pass
 
 	return greater_id + 1
+
 
 
 
@@ -76,8 +77,15 @@ req = struct.pack("4sl", socket.inet_aton(group_multicast), socket.INADDR_ANY)
 
 sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, req)
 
+#Inicia lista (dicionário) de servidores
+server_list = {}
+
+#Seta o ID do servidor, de forme incremental em relação aos outros servidores ativos
+sid = get_server_id()
+print(sid)
+
 #Inicia thread que envia hearbeats a cada 10 segundos
-hb = threading.Thread(target=heartbeat, args=(sockhb,))
+hb = threading.Thread(target=heartbeat, args=(sockhb, sid,))
 hb.daemon = True
 hb.start()
 
