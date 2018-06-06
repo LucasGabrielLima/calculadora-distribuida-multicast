@@ -1,12 +1,44 @@
 # -*- coding: utf-8 -*-
 import socket
+import pickle
+
+class Message(object):
+    sender = ''
+    sid = None #Server ID
+    payload = ''
+
+    def __init__(self, sender = 's', sid = None, payload = ''):
+    	self.sender = sender
+        self.sid = sid
+        self.payload = payload
+
+
+
+def send_to_group(message):
+	payload = Message('c', None, payload)
+	payload = pickle.dumps(payload)
+	sock.sendto(payload, (group_multicast, port))
+
+def receive():
+	 try:
+        data, address = sock.recv(10240)
+    except:
+        print('Ocorreu um timeout na resposta. Tente novamente.')
+        return
+
+    data = pickle.loads(data)
+
+    try:
+        if (data.payload):
+            print("Resposta recebidado servidor " + address + ":  data.payload")
+            
+    except:
+    	print("Você recebeu dados de fontes desconhecidas na porta de recebimento. Por favor mude a porta e tente novamente.")
+    	sys.exit()
+
 
 group_multicast = '224.1.1.1'
 port = 5007
-start_byte = "@"
-
-def send_to_group(message):
-	sock.sendto(start_byte + 'c' + message, (group_multicast, port))
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
 sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 2)
@@ -31,6 +63,8 @@ while (message != "sair"):
 						print("Enviando a seguinte mensagem: " + message)
 					except:
 						print("Erro ao enviar a mensagem")
+
+					receive()
 				else:
 					print("ERRO: Expressão inválida.")
 			else:
