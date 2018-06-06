@@ -20,7 +20,7 @@ def send_to_group(message):
 	sock.sendto(payload, (group_multicast, port))
 
 def receive():
-	 try:
+	try:
         data, address = sock.recv(10240)
     except:
         print('Ocorreu um timeout na resposta. Tente novamente.')
