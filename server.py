@@ -43,19 +43,35 @@ def get_server_id():
 		try:
 			message, addr = sock.recvfrom(10240)
 			message = pickle.loads(message)
-			print(message.sid)
+
+			#Adiciona servidores de heartbeats recebidos à lista
+			if(message.sender = 's'):
+				server_list[str(addr)] = [message.sid, datetime.datetime.now()]
 			if(message.sender == 's' and message.sid > greater_id):
 				greater_id = message.sid
 
 		except:
 			pass
 
-	return greater_id + 1
+	#Se adiciona na lista de servidores
+	my_id = greater_id + 1
+	server_list[socket.gethostbyname(socket.gethostname())] = [my_id, datetime.datetime.now()]
+	print("Joining server group. My ID is: " + my_id)
+	return my_id
 
+#Chamada quando um heartbeat é recebido
+def update_server_list(addr):
+	now = datetime.datetime.now()
+	server_list[addr] = [server_list[addr][0], now]
+	print(now ': Receveived heartbeat from ' addr)
 
+#Limpa servidores inativos da lista de servidores
+def clean_server_list():
+	for server in server_list:
+		if (datetime.datetime.now() - server_list[server][1] > datetime.timedelta(seconds = 10):
+			server_list.pop(server, None)
+			print('Server ' + server + ' has become inactive')
 
-
-		
 
 group_multicast = '224.1.1.1'
 port = 5007
@@ -80,9 +96,8 @@ sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, req)
 #Inicia lista (dicionário) de servidores
 server_list = {}
 
-#Seta o ID do servidor, de forme incremental em relação aos outros servidores ativos
+#Seta o ID do servidor, de forma incremental em relação aos outros servidores ativos
 sid = get_server_id()
-print(sid)
 
 #Inicia thread que envia hearbeats a cada 10 segundos
 hb = threading.Thread(target=heartbeat, args=(sockhb, sid,))
