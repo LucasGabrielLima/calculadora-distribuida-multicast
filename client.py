@@ -30,7 +30,7 @@ def receive():
 
     try:
         if (data.payload):
-            print("Resposta recebida do servidor " + address + ":  data.payload")
+            print("Resposta recebida do servidor " + address + ": " + data.payload)
             
     except:
     	print("Você recebeu dados de fontes desconhecidas na porta de recebimento. Por favor mude a porta e tente novamente.")
