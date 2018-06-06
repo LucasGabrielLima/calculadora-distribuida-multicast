@@ -5,7 +5,6 @@ import threading
 import datetime
 import pickle #Biblioteca para serializar objetos de forma que possam ser enviados pela rede
 from time import sleep
-from collections import OrderedDict
 
 class Message(object):
     sender = ''
@@ -19,7 +18,7 @@ class Message(object):
 
 
 def heartbeat(sock, sid):
-	print("Sending heartbeat...")
+	print("Enviando heartbeat...")
 	message = Message('s', sid, 'heartbeat')
 	#Serializa objeto da mensagem
 	message = pickle.dumps(message)
@@ -29,7 +28,7 @@ def heartbeat(sock, sid):
 			sock.sendto(message, (group_multicast, port))
 
 		except:
-			print("ERROR: Could not send heartbeat")
+			print("ERRO: Não foi possível enviar o heartbeat")
 			pass
 
 		sleep(3)
@@ -56,21 +55,21 @@ def get_server_id():
 	#Se adiciona na lista de servidores
 	my_id = greater_id + 1
 	server_list[socket.gethostbyname(socket.gethostname())] = [my_id, datetime.datetime.now()]
-	print("Joining server group. My ID is: " + my_id)
+	print("Entrando no grupo de servidores. Meu ID é: " + my_id)
 	return my_id
 
 #Chamada quando um heartbeat é recebido
 def update_server_list(addr):
 	now = datetime.datetime.now()
 	server_list[addr] = [server_list[addr][0], now]
-	print(now ': Receveived heartbeat from ' addr)
+	print(now ': Hearbeat recebido de ' addr)
 
 #Limpa servidores inativos da lista de servidores
 def clean_server_list():
 	for server in server_list:
 		if (datetime.datetime.now() - server_list[server][1] > datetime.timedelta(seconds = 10):
 			server_list.pop(server, None)
-			print('Server ' + server + ' has become inactive')
+			print('Server ' + server + ' se tornou inativo')
 
 
 group_multicast = '224.1.1.1'
@@ -103,10 +102,11 @@ sid = get_server_id()
 hb = threading.Thread(target=heartbeat, args=(sockhb, sid,))
 hb.daemon = True
 hb.start()
+print('Iniciando thread de heartbeats')
 
 
 sleep(5)
-print('Ending heartbeat thread')
+print('Encerrando thread de heartbeats')
 
 sock.close()
 #while True:
