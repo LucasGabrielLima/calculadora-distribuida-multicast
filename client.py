@@ -7,7 +7,7 @@ class Message(object):
 	sid = None #Server ID
 	payload = ''
 
-	def __init__(self, sender = 's', sid = None, payload = ''):
+	def __init__(self, sender = 'c', sid = None, payload = ''):
 		self.sender = sender
 		self.sid = sid
 		self.payload = payload
@@ -21,7 +21,7 @@ def send_to_group(message):
 
 def receive():
 	try:
-		data, address = sock.recv(10240)
+		data, address = sock.recvfrom(10240)
 	except:
 		print('Ocorreu um timeout na resposta. Tente novamente.')
 		return
@@ -38,7 +38,7 @@ def receive():
 
 
 group_multicast = '224.1.1.1'
-port = 5007
+port = 5009
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
 sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 2)

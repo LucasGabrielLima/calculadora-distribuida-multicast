@@ -3,7 +3,7 @@ import socket
 import struct
 import threading
 import datetime
-import sys
+import os
 import pickle #Biblioteca  utilizada para serializar objetos de forma que possam ser enviados pela rede
 from time import sleep
 
@@ -77,25 +77,27 @@ def handle_req(req, addr):
 	pass
 
 def receive(data, address):
-	data = pickle.loads(data)
-	print("received")
-	try:
-		if(data.sender == 'c'):
-			print("Requisição recebida do cliente " + address + ": " + data.payload)
-			clean_server_list()
-			handle_req(data, address)
+	message = pickle.loads(data)
 
-		if(data.sender == 's' and data.payload == 'heartbeat'):
-			update_server_list(address)
+	try:
+		if(True):
+			if(message.sender == 'c'):
+				print("Requisição recebida do cliente " + address + ": " + message.payload)
+				clean_server_list()
+				handle_req(message, address)
+			else:
+				print("mas puta merda")
+
+			if(message.sender == 's' and message.payload == 'heartbeat'):
+				update_server_list(address)
 
 	except:
 		print("Você recebeu dados de fontes desconhecidas na porta de recebimento. Por favor mude a porta e tente novamente.")
-		sys.exit()
 
 
 
 group_multicast = '224.1.1.1'
-port = 5007
+port = 5010
 
 # Cria o socket para envio de heartbeats
 sockhb = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -127,12 +129,14 @@ hb = threading.Thread(target=heartbeat, args=(sockhb, sid,))
 hb.daemon = True #Faz thread morrer caso pai encerre
 hb.start()
 
-
+print(socket.gethostbyname(socket.gethostname()))
 while True:
 	try:
-		data, address = sock.recv(10240)
+		data, address = sock.recvfrom(10240)
 		print("aaa")
-		receive(data, address)
+		print(address)
+
+		receive(data, address[0])
 	except KeyboardInterrupt:
 		# Se receber um ctrl + c
 		break
