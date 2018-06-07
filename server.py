@@ -66,6 +66,7 @@ def update_server_list(message, addr):
 	now.replace(microsecond=0)
 	if(addr != socket.gethostbyname(socket.gethostname())):
 		print(str(now) + ': Hearbeat recebido de ' + str(addr) + '. Atualizando entrada.')
+		print(server_list)
 	else:
 		print("Atualizando minha própria entrada na tabela de servidores.")
 
