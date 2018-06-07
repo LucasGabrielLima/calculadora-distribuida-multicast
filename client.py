@@ -15,7 +15,7 @@ class Message(object):
 
 
 def send_to_group(message):
-	payload = Message('c', None, payload)
+	payload = Message('c', None, message)
 	payload = pickle.dumps(payload)
 	sock.sendto(payload, (group_multicast, port))
 
@@ -61,10 +61,10 @@ while (message != "sair"):
 					try:
 						send_to_group(message)
 						print("Enviando a seguinte mensagem: " + message)
+						receive()
 					except:
 						print("Erro ao enviar a mensagem")
 
-					receive()
 				else:
 					print("ERRO: Expressão inválida.")
 			else:
