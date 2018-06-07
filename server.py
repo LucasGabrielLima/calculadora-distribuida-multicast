@@ -63,7 +63,11 @@ def get_server_id():
 def update_server_list(addr):
 	now = datetime.datetime.now()
 	server_list[addr] = [server_list[addr][0], now]
-	print(now + ': Hearbeat recebido de ' + addr)
+	now.replace(microsecond=0)
+	if(addr != socket.gethostbyname(socket.gethostname())):
+		print(str(now) + ': Hearbeat recebido de ' + str(addr) + '. Atualizando entrada.')
+	else:
+		print("Atualizando minha própria entrada na tabela de servidores.")
 
 
 #Limpa servidores inativos a mais de 10 segundos da lista de servidores
@@ -79,17 +83,18 @@ def handle_req(req, addr):
 def receive(data, address):
 	message = pickle.loads(data)
 
+	print(message.sender)
+	print(message.payload)
 	try:
-		if(True):
-			if(message.sender == 'c'):
-				print("Requisição recebida do cliente " + address + ": " + message.payload)
-				clean_server_list()
-				handle_req(message, address)
-			else:
-				print("mas puta merda")
+		if(message.sender == 'c'):
+			print("Requisição recebida do cliente " + address + ": " + message.payload)
+			clean_server_list()
+			handle_req(message, address)
+		
 
-			if(message.sender == 's' and message.payload == 'heartbeat'):
-				update_server_list(address)
+		if(message.sender == 's' and message.payload == 'heartbeat'):
+
+			update_server_list(address)
 
 	except:
 		print("Você recebeu dados de fontes desconhecidas na porta de recebimento. Por favor mude a porta e tente novamente.")
@@ -133,9 +138,6 @@ print(socket.gethostbyname(socket.gethostname()))
 while True:
 	try:
 		data, address = sock.recvfrom(10240)
-		print("aaa")
-		print(address)
-
 		receive(data, address[0])
 	except KeyboardInterrupt:
 		# Se receber um ctrl + c
