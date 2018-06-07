@@ -3,14 +3,14 @@ import socket
 import pickle
 
 class Message(object):
-    sender = ''
-    sid = None #Server ID
-    payload = ''
+	sender = ''
+	sid = None #Server ID
+	payload = ''
 
-    def __init__(self, sender = 's', sid = None, payload = ''):
-    	self.sender = sender
-        self.sid = sid
-        self.payload = payload
+	def __init__(self, sender = 's', sid = None, payload = ''):
+		self.sender = sender
+		self.sid = sid
+		self.payload = payload
 
 
 
@@ -21,20 +21,20 @@ def send_to_group(message):
 
 def receive():
 	try:
-        data, address = sock.recv(10240)
-    except:
-        print('Ocorreu um timeout na resposta. Tente novamente.')
-        return
+		data, address = sock.recv(10240)
+	except:
+		print('Ocorreu um timeout na resposta. Tente novamente.')
+		return
 
-    data = pickle.loads(data)
+	data = pickle.loads(data)
 
-    try:
-        if (data.payload):
-            print("Resposta recebida do servidor " + address + ": " + data.payload)
-            
-    except:
-    	print("Você recebeu dados de fontes desconhecidas na porta de recebimento. Por favor mude a porta e tente novamente.")
-    	sys.exit()
+	try:
+		if (data.payload):
+			print("Resposta recebida do servidor " + address + ": " + data.payload)
+
+	except:
+		print("Você recebeu dados de fontes desconhecidas na porta de recebimento. Por favor mude a porta e tente novamente.")
+		sys.exit()
 
 
 group_multicast = '224.1.1.1'
@@ -69,5 +69,3 @@ while (message != "sair"):
 					print("ERRO: Expressão inválida.")
 			else:
 				print("ERRO: Expressão inválida.")
-
-			

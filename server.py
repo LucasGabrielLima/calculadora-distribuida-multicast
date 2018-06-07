@@ -3,7 +3,8 @@ import socket
 import struct
 import threading
 import datetime
-import pickle #Biblioteca para serializar objetos de forma que possam ser enviados pela rede
+import sys
+import pickle #Biblioteca  utilizada para serializar objetos de forma que possam ser enviados pela rede
 from time import sleep
 
 class Message(object):
@@ -65,7 +66,7 @@ def update_server_list(addr):
 	print(now + ': Hearbeat recebido de ' + addr)
 
 
-#Limpa servidores inativos da lista de servidores
+#Limpa servidores inativos a mais de 10 segundos da lista de servidores
 def clean_server_list():
 	for server in server_list:
 		if (datetime.datetime.now() - server_list[server][1] > datetime.timedelta(seconds = 10)):
@@ -77,7 +78,7 @@ def handle_req(req, addr):
 
 def receive(data, address):
 	data = pickle.loads(data)
-
+	print("received")
 	try:
 		if(data.sender == 'c'):
 			print("Requisição recebida do cliente " + address + ": " + data.payload)
@@ -86,7 +87,7 @@ def receive(data, address):
 
 		if(data.sender == 's' and data.payload == 'heartbeat'):
 			update_server_list(address)
-			
+
 	except:
 		print("Você recebeu dados de fontes desconhecidas na porta de recebimento. Por favor mude a porta e tente novamente.")
 		sys.exit()
@@ -121,29 +122,26 @@ server_list = {}
 #Seta o ID do servidor, de forma incremental em relação aos outros servidores ativos
 sid = get_server_id()
 
-#Inicia thread que envia hearbeats a cada 10 segundos
+#Inicia thread que envia hearbeats a cada 3 segundos
 hb = threading.Thread(target=heartbeat, args=(sockhb, sid,))
-hb.daemon = True
+hb.daemon = True #Faz thread morrer caso pai encerre
 hb.start()
 
-quit = False
 
 while True:
 	try:
 		data, address = sock.recv(10240)
+		print("aaa")
 		receive(data, address)
 	except KeyboardInterrupt:
 		# Se receber um ctrl + c
 		break
-		
+
 	except:
 		pass
 
 
-print('Encerrando thread de heartbeats.')
-
 sock.close()
 sockhb.close()
 print("Encerrando sockets inicializados.")
-#while True:
-#  print sock.recv(10240)
+print('Encerrando execução do programa principal e da thread de heartbeats.')

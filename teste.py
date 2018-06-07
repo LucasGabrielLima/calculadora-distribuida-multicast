@@ -16,8 +16,8 @@ class Message(object):
 
 def send_to_group(message):
 	sock.sendto(start_byte+ 'c' + message, (group_multicast, port))
-	
-message = Message('s', 1, '')
+
+message = Message('c', None, "5 + 1")
 message = pickle.dumps(message)
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
