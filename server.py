@@ -69,6 +69,7 @@ def update_server_list(message, addr):
 		print(server_list)
 	else:
 		print("Atualizando minha própria entrada na tabela de servidores.")
+		print(server_list)
 
 
 #Limpa servidores inativos a mais de 10 segundos da lista de servidores
