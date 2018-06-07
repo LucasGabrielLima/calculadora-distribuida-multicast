@@ -66,10 +66,8 @@ def update_server_list(message, addr):
 	now.replace(microsecond=0)
 	if(addr != socket.gethostbyname(socket.gethostname())):
 		print(str(now) + ': Hearbeat recebido de ' + str(addr) + '. Atualizando entrada.')
-		print(server_list)
 	else:
 		print("Atualizando minha própria entrada na tabela de servidores.")
-		print(server_list)
 
 
 #Limpa servidores inativos a mais de 10 segundos da lista de servidores
@@ -77,7 +75,7 @@ def clean_server_list():
 	for server in server_list:
 		if (datetime.datetime.now() - server_list[server][1] > datetime.timedelta(seconds = 10)):
 			server_list.pop(server, None)
-			print('Server ' + server + ' se tornou inativo')
+			print('Server ' + str(server) + ' se tornou inativo. Removendo-o da lista.')
 
 def handle_req(req, addr):
 	pass
@@ -89,13 +87,12 @@ def receive(data, address):
 	print(message.payload)
 	try:
 		if(message.sender == 'c'):
-			print("Requisição recebida do cliente " + address + ": " + message.payload)
+			print("Requisição recebida do cliente " + str(address) + ": " + message.payload)
 			clean_server_list()
 			handle_req(message, address)
 		
 
 		if(message.sender == 's' and message.payload == 'heartbeat'):
-
 			update_server_list(message, address)
 
 	except:

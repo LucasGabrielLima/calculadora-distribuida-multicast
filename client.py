@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import socket
 import pickle
+import struct
 
 class Message(object):
 	sender = ''
@@ -17,7 +18,11 @@ class Message(object):
 def send_to_group(message):
 	payload = Message('c', None, message)
 	payload = pickle.dumps(payload)
-	sock.sendto(payload, (group_multicast, port))
+	try:
+		sock.sendto(payload, (group_multicast, port))
+		print("Enviando a seguinte mensagem: " + message)
+	except:
+		print("ERRO: Não foi possível enviar a opoeração. Tente novamente")
 
 def receive():
 	try:
@@ -38,11 +43,11 @@ def receive():
 
 
 group_multicast = '224.1.1.1'
-port = 5009
+port = 5010
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
-sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 2)
-sock.sendto("robot", (group_multicast, port))
+ttl = struct.pack('b', 2)
+sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, ttl)
 
 message = ""
 print("")
@@ -60,7 +65,6 @@ while (message != "sair"):
 				if (digitos[1] == "+" or digitos[1] == "-" or digitos[1] == "*" or digitos[1] == "/"):
 					try:
 						send_to_group(message)
-						print("Enviando a seguinte mensagem: " + message)
 						receive()
 					except:
 						print("Erro ao enviar a mensagem")
