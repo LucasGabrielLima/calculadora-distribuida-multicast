@@ -61,9 +61,8 @@ def get_server_id():
 
 #Chamada quando um heartbeat é recebido
 def update_server_list(message, addr):
-	now = datetime.datetime.now()
+	now = datetime.datetime.now().replace(microsecond=0)
 	server_list[addr] = [message.sid, now]
-	now.replace(microsecond=0)
 	if(addr != socket.gethostbyname(socket.gethostname())):
 		print(str(now) + ': Hearbeat recebido de ' + str(addr) + '. Atualizando entrada.')
 	else:
