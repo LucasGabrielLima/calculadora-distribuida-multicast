@@ -60,9 +60,9 @@ def get_server_id():
 	return my_id
 
 #Chamada quando um heartbeat é recebido
-def update_server_list(addr):
+def update_server_list(message, addr):
 	now = datetime.datetime.now()
-	server_list[addr] = [server_list[addr][0], now]
+	server_list[addr] = [message.sid, now]
 	now.replace(microsecond=0)
 	if(addr != socket.gethostbyname(socket.gethostname())):
 		print(str(now) + ': Hearbeat recebido de ' + str(addr) + '. Atualizando entrada.')
@@ -94,7 +94,7 @@ def receive(data, address):
 
 		if(message.sender == 's' and message.payload == 'heartbeat'):
 
-			update_server_list(address)
+			update_server_list(message, address)
 
 	except:
 		print("Você recebeu dados de fontes desconhecidas na porta de recebimento. Por favor mude a porta e tente novamente.")
