@@ -1,11 +1,11 @@
-O trabalho foi implementado em Python e é dividido em duas partes, a que deve ser executada pelo cliente, que vai solicitar o cálculo, e a que vai ser executada nos servidores, que vão realizar o cálculo e devolver a resposta ao cliente, ou alguma mensagem de erro caso ocorra.
+O trabalho foi implementado em Python e é dividido em duas partes, a que deve ser executada pelo cliente, que vai solicitar o cálculo, e a que vai ser executada nos servidores, que vão eleger um líder para realizar o cálculo e devolver a resposta ao cliente, ou alguma mensagem de erro caso ocorra. Utilizamos multicast para que o grupo de servidores possa responder pelo mesmo endereço IP. Utilizamos o IP 224.1.1.1 para o grupo multicast.
 
-A cada 3 segundos cada servidor envia um Heartbeat para os outros servidores, para que cada um tenha sempre uma lista atualizada de quem está disponível
+Os servidores mantém controle dos outros servidores ativos através do envio de "heartbeats". Os hearbeats são enviados a cada 3 segundos, e avisam os outros servidores que o servidor remetente ainda está ativo. Cada servidor inicia um thread responsável pelo envio dos heartbeats. Utilizamos um dicionário para associar cada servidor do grupo à hora do último heartbeat dele que foi recebido.
 
-Os servidores conectados são mantidos em um DICONARIO??AS?D que armazena ??????????????????? 
+Cada servidor recebe um ID ao entrar no grupo multicast. Ao entrar no grupo, o servidor escuta pelo tempo do heartbeat, e ao receber um heartbeat registra os endereços e os IDs dos servidores. Então, o servidor se associa o maior ID escutado + 1.
 
-A eleição do líder entre os servidores é feita com base no ID, o servidor de menor ID no momento da solicitação é escolhido.
+O líder é o servidor ativo com o menor ID.
 
-O cliente pode realizar operações matemáticas básicas (adição, subtração, divisão e multiplicação) entre dois números
+Ao receber uma requisição de um cliente, o servidor faz um varredura na lista de servidores procurando por servidores inativos. Definimos um servidor inativo caso não tenhamos recebido nenhum heartbeat dele por 10 segundos. Caso haja algum servidor inativo, sua entrada é deletada da lista de servidores. Após isso, o servidor verifica se é o líder, e caso seja, inicia um thread responsável por calcular e responder a requisição, portando podemos definir nossos servidores como concorrentes.
 
-O servidor cria uma thread para heartbeat e uma para responder
+O cliente pode realizar operações matemáticas básicas (adição, subtração, divisão e multiplicação) entre dois números, no formato "3 + 1" (número operação número, separados por espaços). O cliente é responsável por validar o formato da operação e descartar operações incorretas. Caso a operação esteja correta, ela é enviada ao grupo multicast, e o cliente aguarda sua resposta.
