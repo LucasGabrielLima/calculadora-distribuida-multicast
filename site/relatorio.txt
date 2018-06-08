@@ -1,0 +1,11 @@
+O trabalho foi implementado em Python e é dividido em duas partes, a que deve ser executada pelo cliente, que vai solicitar o cálculo, e a que vai ser executada nos servidores, que vão realizar o cálculo e devolver a resposta ao cliente, ou alguma mensagem de erro caso ocorra.
+
+A cada 3 segundos cada servidor envia um Heartbeat para os outros servidores, para que cada um tenha sempre uma lista atualizada de quem está disponível
+
+Os servidores conectados são mantidos em um DICONARIO??AS?D que armazena ??????????????????? 
+
+A eleição do líder entre os servidores é feita com base no ID, o servidor de menor ID no momento da solicitação é escolhido.
+
+O cliente pode realizar operações matemáticas básicas (adição, subtração, divisão e multiplicação) entre dois números
+
+O servidor cria uma thread para heartbeat e uma para responder
