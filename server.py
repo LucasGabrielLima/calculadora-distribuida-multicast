@@ -46,7 +46,7 @@ def get_server_id():
 
 			#Adiciona servidores de heartbeats recebidos à lista
 			if(message.sender == 's'):
-				server_list[str(addr)] = [message.sid, datetime.datetime.now()]
+				server_list[str(addr[0])] = [message.sid, datetime.datetime.now()]
 			if(message.sender == 's' and message.sid > greater_id):
 				greater_id = message.sid
 
@@ -64,7 +64,7 @@ def update_server_list(message, addr):
 	now = datetime.datetime.now().replace(microsecond=0)
 	server_list[addr] = [message.sid, now]
 	if(addr != socket.gethostbyname(socket.gethostname())):
-		print(str(now) + ': Hearbeat recebido de ' + str(addr) + '. Atualizando entrada.')
+		print(str(now) + ': Hearbeat recebido de ' + str(addr) + '. Atualizando tabela de servidores.')
 	else:
 		print("Atualizando minha própria entrada na tabela de servidores.")
 
@@ -82,8 +82,6 @@ def handle_req(req, addr):
 def receive(data, address):
 	message = pickle.loads(data)
 
-	print(message.sender)
-	print(message.payload)
 	try:
 		if(message.sender == 'c'):
 			print("Requisição recebida do cliente " + str(address) + ": " + message.payload)
