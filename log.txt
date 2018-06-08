@@ -1,0 +1,87 @@
+# Servidor 1
+=============================================================================
+Implementação de calculadora distribuida usando multicast
+Alunos: Adolfo Tognetti Melo Lima Araújo e Lucas Gabriel Lima
+Inicio da execução do servidor de IP: 10.254.223.41
+=============================================================================
+2018-06-08 17:59:05: Criado socket para envio de heartbeats.
+2018-06-08 17:59:05: Criado socket para comunicação.
+2018-06-08 17:59:09: Entrando no grupo de servidores. Meu ID é: 1
+2018-06-08 17:59:09: Iniciando thread de heartbeats.
+10.254.223.41
+2018-06-08 17:59:17: Hearbeat recebido de 10.254.223.42. Atualizando tabela de servidores.
+2018-06-08 17:59:20: Hearbeat recebido de 10.254.223.42. Atualizando tabela de servidores.
+2018-06-08 17:59:23: Hearbeat recebido de 10.254.223.42. Atualizando tabela de servidores.
+2018-06-08 17:59:25: Requisição recebida do cliente 10.254.223.43: 4 + 1
+2018-06-08 17:59:25: Eu tenho o menor ID, portanto sou o líder!
+2018-06-08 17:59:25: Iniciando thread de resposta.
+2018-06-08 17:59:25: Enviando resposta para o cliente 10.254.223.43: 5
+2018-06-08 17:59:26: Hearbeat recebido de 10.254.223.42. Atualizando tabela de servidores.
+2018-06-08 17:59:29: Hearbeat recebido de 10.254.223.42. Atualizando tabela de servidores.
+2018-06-08 17:59:31: Requisição recebida do cliente 10.254.223.43: 3 * 1000
+2018-06-08 17:59:31: Eu tenho o menor ID, portanto sou o líder!
+2018-06-08 17:59:31: Iniciando thread de resposta.
+2018-06-08 17:59:31: Enviando resposta para o cliente 10.254.223.43: 3000
+2018-06-08 17:59:32: Hearbeat recebido de 10.254.223.42. Atualizando tabela de servidores.
+2018-06-08 17:59:34: Requisição recebida do cliente 10.254.223.43: 5 / 0
+2018-06-08 17:59:34: Eu tenho o menor ID, portanto sou o líder!
+2018-06-08 17:59:34: Iniciando thread de resposta.
+2018-06-08 17:59:34: Enviando resposta para o cliente 10.254.223.43: Não é possível dividir por 0.
+2018-06-08 17:59:35: Hearbeat recebido de 10.254.223.42. Atualizando tabela de servidores.
+2018-06-08 17:59:38: Hearbeat recebido de 10.254.223.42. Atualizando tabela de servidores.
+2018-06-08 17:59:41: Hearbeat recebido de 10.254.223.42. Atualizando tabela de servidores.
+2018-06-08 17:59:41: Encerrando sockets inicializados.
+2018-06-08 17:59:41: Encerrando execução do programa principal e da thread de heartbeats.
+
+
+# Servidor 2
+=============================================================================
+Implementação de calculadora distribuida usando multicast
+Alunos: Adolfo Tognetti Melo Lima Araújo e Lucas Gabriel Lima
+Inicio da execução do servidor de IP: 10.254.223.42
+=============================================================================
+2018-06-08 17:59:12: Criado socket para envio de heartbeats.
+2018-06-08 17:59:12: Criado socket para comunicação.
+2018-06-08 17:59:17: Entrando no grupo de servidores. Meu ID é: 2
+2018-06-08 17:59:17: Iniciando thread de heartbeats.
+10.254.223.42
+2018-06-08 17:59:18: Hearbeat recebido de 10.254.223.41. Atualizando tabela de servidores.
+2018-06-08 17:59:21: Hearbeat recebido de 10.254.223.41. Atualizando tabela de servidores.
+2018-06-08 17:59:24: Hearbeat recebido de 10.254.223.41. Atualizando tabela de servidores.
+2018-06-08 17:59:25: Requisição recebida do cliente 10.254.223.43: 4 + 1
+2018-06-08 17:59:25: Eu não sou o líder. Não responderei a requisição.
+2018-06-08 17:59:27: Hearbeat recebido de 10.254.223.41. Atualizando tabela de servidores.
+2018-06-08 17:59:30: Hearbeat recebido de 10.254.223.41. Atualizando tabela de servidores.
+2018-06-08 17:59:31: Requisição recebida do cliente 10.254.223.43: 3 * 1000
+2018-06-08 17:59:31: Eu não sou o líder. Não responderei a requisição.
+2018-06-08 17:59:33: Hearbeat recebido de 10.254.223.41. Atualizando tabela de servidores.
+2018-06-08 17:59:34: Requisição recebida do cliente 10.254.223.43: 5 / 0
+2018-06-08 17:59:34: Eu não sou o líder. Não responderei a requisição.
+2018-06-08 17:59:36: Hearbeat recebido de 10.254.223.41. Atualizando tabela de servidores.
+2018-06-08 17:59:39: Hearbeat recebido de 10.254.223.41. Atualizando tabela de servidores.
+2018-06-08 17:59:59: Requisição recebida do cliente 10.254.223.43: 5 - 6
+2018-06-08 17:59:59: Server 10.254.223.41 se tornou inativo. Removendo-o da lista.
+2018-06-08 17:59:59: Eu tenho o menor ID, portanto sou o líder!
+2018-06-08 17:59:59: Iniciando thread de resposta.
+2018-06-08 17:59:59: Enviando resposta para o cliente 10.254.223.43: -1
+2018-06-08 18:00:11: Encerrando sockets inicializados.
+2018-06-08 18:00:11: Encerrando execução do programa principal e da thread de heartbeats.
+
+# Cliente
+
+**Client da calculadora**
+**Calcula expressões básicas (+, -, *, /) entre dois números**
+
+Digite sua expressão matemática, ou 'sair' caso queira encerrar: 4 + 1
+Enviando a seguinte mensagem: 4 + 1
+Resposta recebida do servidor 10.254.223.41: 5
+Digite sua expressão matemática, ou 'sair' caso queira encerrar: 3 * 1000
+Enviando a seguinte mensagem: 3 * 1000
+Resposta recebida do servidor 10.254.223.41: 3000
+Digite sua expressão matemática, ou 'sair' caso queira encerrar: 5 / 0
+Enviando a seguinte mensagem: 5 / 0
+Resposta recebida do servidor 10.254.223.41: Não é possível dividir por 0.
+Digite sua expressão matemática, ou 'sair' caso queira encerrar: 5 - 6
+Enviando a seguinte mensagem: 5 - 6
+Resposta recebida do servidor 10.254.223.42: -1
+Digite sua expressão matemática, ou 'sair' caso queira encerrar: sair

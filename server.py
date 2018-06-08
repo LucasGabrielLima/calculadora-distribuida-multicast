@@ -20,7 +20,8 @@ class Message(object):
 
 
 def heartbeat(sock, sid):
-	print('Iniciando thread de heartbeats.')
+	now = str(datetime.datetime.now().replace(microsecond=0))
+	print(now + ': Iniciando thread de heartbeats.')
 	message = Message('s', sid, 'heartbeat')
 	#Serializa objeto da mensagem
 	message = pickle.dumps(message)
@@ -57,7 +58,8 @@ def get_server_id():
 	#Se adiciona na lista de servidores
 	my_id = greater_id + 1
 	server_list[socket.gethostbyname(socket.gethostname())] = [my_id, datetime.datetime.now()]
-	print("Entrando no grupo de servidores. Meu ID é: " + str(my_id))
+	now = str(datetime.datetime.now().replace(microsecond=0))
+	print(now + ": Entrando no grupo de servidores. Meu ID é: " + str(my_id))
 	return my_id
 
 #Chamada quando um heartbeat é recebido
@@ -73,10 +75,12 @@ def clean_server_list():
 	for server in server_list:
 		if (datetime.datetime.now() - server_list[server][1] > datetime.timedelta(seconds = 10)):
 			server_list.pop(server, None)
-			print('Server ' + str(server) + ' se tornou inativo. Removendo-o da lista.')
+			now = str(datetime.datetime.now().replace(microsecond=0))
+			print(now + ': Server ' + str(server) + ' se tornou inativo. Removendo-o da lista.')
 
 def handle_req(req, addr):
 	smaller_id = sid
+	now = str(datetime.datetime.now().replace(microsecond=0))
 
 	#Busca servidor com menor ID (líder)
 	for server in server_list:
@@ -84,16 +88,17 @@ def handle_req(req, addr):
 			smaller_id = server_list[server][0]
 
 	if(smaller_id == sid):
-		print("Eu sou o líder!")
+		print(now + ": Eu tenho o menor ID, portanto sou o líder!")
 		res = threading.Thread(target=response_thread, args=(req, addr,))
 		res.daemon = True #Faz thread morrer caso pai encerre
 		res.start()
 	else:
-		print("Eu não sou o líder. Não responderei a requisição.")
+		print(now + ": Eu não sou o líder. Não responderei a requisição.")
 
 
 def response_thread(message, addr):
-	print("Iniciando thread de resposta.")
+	now = str(datetime.datetime.now().replace(microsecond=0))
+	print(now + ": Iniciando thread de resposta.")
 	#Parseia operando e operações do payload da mensagem
 	parsed = string.split(message.payload, ' ')
 	a = int(parsed[0])
@@ -108,9 +113,9 @@ def response_thread(message, addr):
 		if(b != 0):
 			response = a / b
 		else:
-			response = "Não é possível dividir por 0. Cavalo."
+			response = "Não é possível dividir por 0."
 	elif(op == '*'):
-		response = a - b
+		response = a * b
 	else:
 		response = "Não foi possível atender à requisição."
 		print("Não foi possível atender à requisição.")
@@ -120,7 +125,9 @@ def response_thread(message, addr):
 
 	#Envia resposta ao cliente
 	response_sock.sendto(str(response), (addr, port))
-	print("Enviando resposta para o cliente " + str(addr) + ": " + str(response))
+
+	now = str(datetime.datetime.now().replace(microsecond=0))
+	print(now + ": Enviando resposta para o cliente " + str(addr) + ": " + str(response))
 
 	#Encerra o socket
 	response_sock.close()
@@ -130,7 +137,8 @@ def receive(data, address):
 
 	try:
 		if(message.sender == 'c'):
-			print("Requisição recebida do cliente " + str(address) + ": " + message.payload)
+			now = str(datetime.datetime.now().replace(microsecond=0))
+			print(now + ": Requisição recebida do cliente " + str(address) + ": " + message.payload)
 			clean_server_list()
 			handle_req(message, address)
 		
@@ -143,6 +151,15 @@ def receive(data, address):
 
 
 
+my_ip = socket.gethostbyname(socket.gethostname())
+
+print("=============================================================================")
+print("Implementação de calculadora distribuida usando multicast")
+print("Alunos: Adolfo Tognetti Melo Lima Araújo e Lucas Gabriel Lima")
+print("Inicio da execução do servidor de IP: " + my_ip)
+print("=============================================================================")
+
+
 group_multicast = '224.1.1.1'
 port = 5010
 
@@ -151,7 +168,8 @@ sockhb = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 ttl = struct.pack('b', 2)
 sockhb.settimeout(0.2)
 sockhb.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, ttl)
-print("Criado socket para envio de heartbeats.")
+now = str(datetime.datetime.now().replace(microsecond=0))
+print(now + ": Criado socket para envio de heartbeats.")
 
 #Cria socket UDP para comunicação
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
@@ -163,7 +181,8 @@ sock.bind((group_multicast, port))
 req = struct.pack("4sl", socket.inet_aton(group_multicast), socket.INADDR_ANY)
 
 sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, req)
-print("Criado socket para comunicação.")
+now = str(datetime.datetime.now().replace(microsecond=0))
+print(now + ": Criado socket para comunicação.")
 
 #Inicia lista (dicionário) de servidores
 server_list = {}
@@ -191,5 +210,6 @@ while True:
 
 sock.close()
 sockhb.close()
-print("Encerrando sockets inicializados.")
-print('Encerrando execução do programa principal e da thread de heartbeats.')
+now = str(datetime.datetime.now().replace(microsecond=0))
+print(now + ": Encerrando sockets inicializados.")
+print(now + ': Encerrando execução do programa principal e da thread de heartbeats.')

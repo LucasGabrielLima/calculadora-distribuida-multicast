@@ -38,6 +38,12 @@ group_multicast = '224.1.1.1'
 port = 5010
 my_ip = socket.gethostbyname(socket.gethostname())
 
+print("=============================================================================")
+print("Implementação de calculadora distribuida usando multicast")
+print("Alunos: Adolfo Tognetti Melo Lima Araújo e Lucas Gabriel Lima")
+print("Inicio da execução do cliente de IP: " + my_ip)
+print("=============================================================================")
+
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
 sock.bind((my_ip, port))
 ttl = struct.pack('b', 2)
