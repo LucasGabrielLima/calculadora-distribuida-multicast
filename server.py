@@ -4,6 +4,7 @@ import struct
 import threading
 import datetime
 import os
+import string
 import pickle #Biblioteca  utilizada para serializar objetos de forma que possam ser enviados pela rede
 from time import sleep
 
@@ -25,7 +26,7 @@ def heartbeat(sock, sid):
 	message = pickle.dumps(message)
 	while True:
 		try:
-			#Send Hearbeat to group
+			#Envia heartbeat para grupo
 			sock.sendto(message, (group_multicast, port))
 
 		except:
@@ -65,8 +66,6 @@ def update_server_list(message, addr):
 	server_list[addr] = [message.sid, now]
 	if(addr != socket.gethostbyname(socket.gethostname())):
 		print(str(now) + ': Hearbeat recebido de ' + str(addr) + '. Atualizando tabela de servidores.')
-	else:
-		print("Atualizando minha própria entrada na tabela de servidores.")
 
 
 #Limpa servidores inativos a mais de 10 segundos da lista de servidores
@@ -77,7 +76,54 @@ def clean_server_list():
 			print('Server ' + str(server) + ' se tornou inativo. Removendo-o da lista.')
 
 def handle_req(req, addr):
-	pass
+	smaller_id = sid
+
+	#Busca servidor com menor ID (líder)
+	for server in server_list:
+		if(server_list[server][0] < smaller_id):
+			smaller_id = server_list[server][0]
+
+	if(smaller_id == sid):
+		print("Eu sou o líder!")
+		res = threading.Thread(target=response_thread, args=(req, addr,))
+		res.daemon = True #Faz thread morrer caso pai encerre
+		res.start()
+	else:
+		print("Eu não sou o líder. Não responderei a requisição.")
+
+
+def response_thread(message, addr):
+	print("Iniciando thread de resposta.")
+	#Parseia operando e operações do payload da mensagem
+	parsed = string.split(message.payload, ' ')
+	a = int(parsed[0])
+	b = int(parsed[2])
+	op = parsed[1]
+
+	if(op == '+'):
+		response = a + b
+	elif(op == '-'):
+		response = a - b
+	elif(op == '/'):
+		if(b != 0):
+			response = a / b
+		else:
+			response = "Não é possível dividir por 0. Cavalo."
+	elif(op == '*'):
+		response = a - b
+	else:
+		response = "Não foi possível atender à requisição."
+		print("Não foi possível atender à requisição.")
+
+	#Cria socket para responder a requisição do cliente
+	response_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+	#Envia resposta ao cliente
+	response_sock.sendto(str(response), (addr, port))
+	print("Enviando resposta para o cliente " + str(addr) + ": " + str(response))
+
+	#Encerra o socket
+	response_sock.close()
 
 def receive(data, address):
 	message = pickle.loads(data)
@@ -93,7 +139,7 @@ def receive(data, address):
 			update_server_list(message, address)
 
 	except:
-		print("Você recebeu dados de fontes desconhecidas na porta de recebimento. Por favor mude a porta e tente novamente.")
+		print("O servidor recebeu dados de fontes desconhecidas na porta de recebimento.")
 
 
 

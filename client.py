@@ -31,21 +31,15 @@ def receive():
 		print('Ocorreu um timeout na resposta. Tente novamente.')
 		return
 
-	data = pickle.loads(data)
-
-	try:
-		if (data.payload):
-			print("Resposta recebida do servidor " + address + ": " + data.payload)
-
-	except:
-		print("Você recebeu dados de fontes desconhecidas na porta de recebimento. Por favor mude a porta e tente novamente.")
-		sys.exit()
+	print("Resposta recebida do servidor " + str(address[0]) + ": " + data)
 
 
 group_multicast = '224.1.1.1'
 port = 5010
+my_ip = socket.gethostbyname(socket.gethostname())
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+sock.bind((my_ip, port))
 ttl = struct.pack('b', 2)
 sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, ttl)
 
@@ -63,11 +57,8 @@ while (message != "sair"):
 			digitos = message.split( )
 			if (digitos[0].isdigit() and digitos[2].isdigit()):
 				if (digitos[1] == "+" or digitos[1] == "-" or digitos[1] == "*" or digitos[1] == "/"):
-					try:
-						send_to_group(message)
-						receive()
-					except:
-						print("Erro ao enviar a mensagem")
+					send_to_group(message)
+					receive()
 
 				else:
 					print("ERRO: Expressão inválida.")
